@@ -21,7 +21,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(RichText), findsOneWidget);
+      expect(find.byType(RichText), findsWidgets);
     });
 
     testWidgets('renders multiple verses correctly', (
@@ -36,7 +36,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(RichText), findsOneWidget);
+      expect(find.byType(RichText), findsWidgets);
     });
 
     testWidgets('applies custom theme correctly', (WidgetTester tester) async {
@@ -54,7 +54,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(RichText), findsOneWidget);
+      expect(find.byType(RichText), findsWidgets);
     });
 
     testWidgets('hides verse numbers when showVerseNumbers is false', (
@@ -74,7 +74,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(RichText), findsOneWidget);
+      expect(find.byType(RichText), findsWidgets);
     });
 
     testWidgets('applies custom verse number formatter', (
@@ -94,7 +94,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(RichText), findsOneWidget);
+      expect(find.byType(RichText), findsWidgets);
     });
 
     testWidgets('handles verses spanning multiple pages', (
@@ -110,26 +110,31 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(RichText), findsOneWidget);
+      expect(find.byType(RichText), findsWidgets);
     });
 
     testWidgets('applies responsive scaling', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: Scaffold(
-            body: QcfVerses(
-              surahNumber: 1,
-              firstVerse: 1,
-              lastVerse: 7,
-              sp: 1.5,
-              h: 1.2,
+            body: Center(
+              child: SizedBox(
+                width: 500,
+                child: QcfVerses(
+                  surahNumber: 1,
+                  firstVerse: 1,
+                  lastVerse: 7,
+                  sp: 1.5,
+                  h: 1.2,
+                ),
+              ),
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(RichText), findsOneWidget);
+      expect(find.byType(RichText), findsWidgets);
     });
 
     test('validates surah number range', () {

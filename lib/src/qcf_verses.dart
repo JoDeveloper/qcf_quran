@@ -154,18 +154,19 @@ class QcfVerses extends StatelessWidget {
       // Determine if verse ends with newline
       bool endsWithNewline = verseText.endsWith("\n");
 
-      // Remove the verse number glyph (last character or last 2 if newline)
-      String verseTextWithoutNumber =
-          endsWithNewline
-              ? verseText.substring(0, verseText.length - 2)
-              : verseText.substring(0, verseText.length - 1);
+      // Remove the verse number glyph. The fixed API handles trailing '\n' correctly.
+      String verseTextWithoutNumber = getVerseQCF(
+        surahNumber,
+        verseNumber,
+        verseEndSymbol: false,
+      );
 
       // Calculate responsive font size
       double effectiveFontSize =
           fontSize ?? (getFontSize(pageNumber, context) / sp);
 
       // Build verse number span
-      InlineSpan? verseNumberSpan;
+      List<InlineSpan> verseChildren = [];
       if (showVerseNumbers) {
         String verseNumberText;
         if (verseNumberFormatter != null) {
@@ -179,34 +180,49 @@ class QcfVerses extends StatelessWidget {
             verseNumberText += " ";
           }
 
-          verseNumberSpan = TextSpan(
-            text: verseNumberText,
-            style: TextStyle(
-              fontSize:
-                  effectiveTheme.verseNumberHeight > 0
-                      ? effectiveFontSize * 0.8
-                      : effectiveFontSize,
-              height: effectiveTheme.verseNumberHeight / h,
-              fontFamily: fontFamily,
-              color: effectiveTheme.verseNumberColor,
-              backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+          verseChildren.add(
+            TextSpan(
+              text: verseNumberText,
+              style: TextStyle(
+                fontSize:
+                    effectiveTheme.verseNumberHeight > 0
+                        ? effectiveFontSize * 0.8
+                        : effectiveFontSize,
+                height: effectiveTheme.verseNumberHeight / h,
+                fontFamily: fontFamily,
+                // Removed package parameter for dynamic font
+                color: effectiveTheme.verseNumberColor,
+                backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+              ),
             ),
           );
         } else {
-          // Use QCF verse number glyph (default)
+          // Use QCF verse number glyph (default).
+          // getVerseNumberQCF is now fixed to return the actual glyph even when
+          // the verse ends with '\n'.
           verseNumberText = getVerseNumberQCF(surahNumber, verseNumber);
 
-          verseNumberSpan = TextSpan(
-            text: verseNumberText,
-            style: TextStyle(
-              fontSize: effectiveFontSize,
-              height: effectiveTheme.verseNumberHeight / h,
-              fontFamily: fontFamily,
-              color: effectiveTheme.verseNumberColor,
-              backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+          verseChildren.add(
+            TextSpan(
+              text: verseNumberText,
+              style: TextStyle(
+                fontSize: effectiveFontSize,
+                height: effectiveTheme.verseNumberHeight / h,
+                fontFamily: fontFamily,
+                // Removed package parameter for dynamic font
+                color: effectiveTheme.verseNumberColor,
+                backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+              ),
             ),
           );
+
+          // Append the newline outside the colored span for tight rendering
+          if (endsWithNewline) {
+            verseChildren.add(const TextSpan(text: "\n"));
+          }
         }
+      } else if (endsWithNewline) {
+        verseChildren.add(const TextSpan(text: "\n"));
       }
 
       // Build the verse span
@@ -227,7 +243,7 @@ class QcfVerses extends StatelessWidget {
             color: effectiveTheme.verseTextColor,
             backgroundColor: verseBgColor,
           ),
-          children: verseNumberSpan != null ? [verseNumberSpan] : null,
+          children: verseChildren.isNotEmpty ? verseChildren : null,
         ),
       );
     }

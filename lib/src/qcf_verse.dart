@@ -55,6 +55,8 @@ class _QcfVerseState extends State<QcfVerse> {
   @override
   Widget build(BuildContext context) {
     var pageNumber = getPageNumber(widget.surahNumber, widget.verseNumber);
+    final effectiveTheme = widget.theme ?? const QcfThemeData();
+    var pageFontSize = getFontSize(pageNumber, context);
 
     return FutureBuilder(
       future: DynamicFontLoader.loadFont(pageNumber),
@@ -66,9 +68,6 @@ class _QcfVerseState extends State<QcfVerse> {
           return Center(child: Text('Failed to load font: ${snapshot.error}'));
         }
 
-        final effectiveTheme = widget.theme ?? const QcfThemeData();
-        var pageFontSize = getFontSize(pageNumber, context);
-
         final verseTextColor = widget.theme?.verseTextColor ?? widget.textColor;
         final verseBgColor =
             widget.theme?.verseBackgroundColor?.call(
@@ -76,6 +75,34 @@ class _QcfVerseState extends State<QcfVerse> {
               widget.verseNumber,
             ) ??
             (widget.backgroundColor.a > 0 ? widget.backgroundColor : null);
+
+        final String fontFamily =
+            "QCF_P${pageNumber.toString().padLeft(3, '0')}";
+        final double effectiveFontSize =
+            widget.fontSize ?? pageFontSize / widget.sp;
+
+        // getVerseQCF(verseEndSymbol: false) now correctly strips both the glyph
+        // and trailing '\n' (if any), returning pure verse text.
+        final String textWithoutSymbol = getVerseQCF(
+          widget.surahNumber,
+          widget.verseNumber,
+          verseEndSymbol: false,
+        );
+
+        // getVerseNumberQCF now correctly returns the glyph even when followed by '\n'.
+        final String verseNumberGlyph = getVerseNumberQCF(
+          widget.surahNumber,
+          widget.verseNumber,
+        );
+
+        // Check if the original string had a trailing newline so we can append it
+        // after the colored glyph span without it affecting the background color box.
+        final String fullVerseText = getVerseQCF(
+          widget.surahNumber,
+          widget.verseNumber,
+          verseEndSymbol: true,
+        );
+        final bool hasTrailingNewline = fullVerseText.endsWith('\n');
 
         return RichText(
           textDirection: TextDirection.rtl,
@@ -87,24 +114,22 @@ class _QcfVerseState extends State<QcfVerse> {
                   ..onLongPressDown = widget.onLongPressDown
                   ..onLongPressUp = widget.onLongPressUp
                   ..onLongPressCancel = widget.onLongPressCancel,
-            text: getVerseQCF(
-              widget.surahNumber,
-              widget.verseNumber,
-              verseEndSymbol: false,
-            ),
+            text: textWithoutSymbol,
             locale: const Locale("ar"),
             children: [
               TextSpan(
-                text: getVerseNumberQCF(widget.surahNumber, widget.verseNumber),
+                text: verseNumberGlyph,
                 style: TextStyle(
-                  fontFamily: "QCF_P${pageNumber.toString().padLeft(3, '0')}",
+                  fontFamily: fontFamily,
                   // package parameter removed for dynamic fonts
                   color: effectiveTheme.verseNumberColor,
                   height: effectiveTheme.verseNumberHeight / widget.h,
+                  fontSize: effectiveFontSize,
                   backgroundColor:
                       effectiveTheme.verseNumberBackgroundColor ?? verseBgColor,
                 ),
               ),
+              if (hasTrailingNewline) const TextSpan(text: '\n'),
             ],
             style: TextStyle(
               color: verseTextColor,
@@ -112,8 +137,8 @@ class _QcfVerseState extends State<QcfVerse> {
               letterSpacing: effectiveTheme.letterSpacing,
               // package parameter removed for dynamic fonts
               wordSpacing: effectiveTheme.wordSpacing,
-              fontFamily: "QCF_P${pageNumber.toString().padLeft(3, '0')}",
-              fontSize: widget.fontSize ?? pageFontSize / widget.sp,
+              fontFamily: fontFamily,
+              fontSize: effectiveFontSize,
               backgroundColor: verseBgColor,
             ),
           ),

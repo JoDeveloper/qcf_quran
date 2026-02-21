@@ -259,10 +259,8 @@ class QcfPage extends StatelessWidget {
                                           ? 2.2 * h
                                           : theme.verseHeight * h
                                       : (pageNumber == 1 || pageNumber == 2)
-                                      ? 4 *
-                                          h // simplified based on user's manual edit evaluation
-                                      : 4 *
-                                          h, // simplified based on user's manual edit evaluation
+                                      ? 4 * h
+                                      : 4 * h,
                               letterSpacing: theme.letterSpacing,
                               wordSpacing: theme.wordSpacing,
                             ),
