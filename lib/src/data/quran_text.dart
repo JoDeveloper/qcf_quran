@@ -41576,7 +41576,7 @@ const List quranText=[
   {
     "surah_number": 74,
     "verse_number": 22,
-    "qcfData": "ﱍﱎﱏﱐ\n",
+    "qcfData": "ﱍﱎﱏﱐ",
     "content": "ثُمَّ عَبَسَ وَبَسَرَ",
     "text_normal": "ثم عبس وبسر",
     "qcfv4data": "ﱍﱎﱏ"
@@ -41584,7 +41584,7 @@ const List quranText=[
   {
     "surah_number": 74,
     "verse_number": 23,
-    "qcfData": "ﱑﱒﱓﱔ",
+    "qcfData": "\nﱑﱒﱓﱔ",
     "content": "ثُمَّ أَدۡبَرَ وَٱسۡتَكۡبَرَ",
     "text_normal": "ثم أدبر واستكبر",
     "qcfv4data": "ﱑﱒﱓ"
@@ -41816,7 +41816,7 @@ const List quranText=[
   {
     "surah_number": 74,
     "verse_number": 52,
-    "qcfData": "ﱔﱕﱖﱗﱘﱙﱚﱛﱜﱝ",
+    "qcfData": "\nﱔﱕﱖﱗﱘﱙﱚﱛﱜﱝ",
     "content": "بَلۡ يُرِيدُ كُلُّ ٱمۡرِيٕٖ مِّنۡهُمۡ أَن يُؤۡتَىٰ صُحُفٗا مُّنَشَّرَةٗ",
     "text_normal": "بل يريد كل امرئ منهم أن يؤتى صحفا منشرة",
     "qcfv4data": "ﱔﱕﱖﱗﱘﱙﱚﱛﱜ"
@@ -42334,7 +42334,7 @@ const List quranText=[
   {
     "surah_number": 76,
     "verse_number": 23,
-    "qcfData": "ﳔﳕ\nﳖﳗﳘﳙﳚ",
+    "qcfData": "ﳔﳕﳖﳗﳘﳙﳚ",
     "content": "إِنَّا نَحۡنُ نَزَّلۡنَا عَلَيۡكَ ٱلۡقُرۡءَانَ تَنزِيلٗا",
     "text_normal": "إنا نحن نزلنا عليك القرآن تنزيلا",
     "qcfv4data": "ﳔﳕﳖﳗﳘﳙ"
@@ -44811,14 +44811,14 @@ const List quranText=[
   {
     "surah_number": 86,
     "verse_number": 3,
-    "qcfData": "ﱉﱊﱋ\n",
+    "qcfData": "ﱉﱊﱋ",
     "content": "ٱلنَّجۡمُ ٱلثَّاقِبُ",
     "text_normal": "النجم الثاقب"
   },
   {
     "surah_number": 86,
     "verse_number": 4,
-    "qcfData": "ﱌﱍﱎﱏﱐﱑﱒ",
+    "qcfData": "\nﱌﱍﱎﱏﱐﱑﱒ",
     "content": "إِن كُلُّ نَفۡسٖ لَّمَّا عَلَيۡهَا حَافِظٞ",
     "text_normal": "إن كل نفس لما عليها حافظ"
   },
@@ -46739,14 +46739,14 @@ const List quranText=[
   {
     "surah_number": 106,
     "verse_number": 2,
-    "qcfData": "ﱄﱅﱆﱇﱈ\n",
+    "qcfData": "ﱄﱅﱆﱇﱈ",
     "content": "إِۦلَٰفِهِمۡ رِحۡلَةَ ٱلشِّتَآءِ وَٱلصَّيۡفِ",
     "text_normal": "إيلافهم رحلة الشتاء والصيف"
   },
   {
     "surah_number": 106,
     "verse_number": 3,
-    "qcfData": "ﱉﱊﱋﱌﱍ",
+    "qcfData": "\nﱉﱊﱋﱌﱍ",
     "content": "فَلۡيَعۡبُدُواْ رَبَّ هَٰذَا ٱلۡبَيۡتِ",
     "text_normal": "فليعبدوا رب هذا البيت"
   },

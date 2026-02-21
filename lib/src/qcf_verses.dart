@@ -72,7 +72,10 @@ class QcfVerses extends StatelessWidget {
     this.h = 1.0,
     this.fontSize,
   }) : assert(firstVerse <= lastVerse, 'firstVerse must be <= lastVerse'),
-       assert(surahNumber >= 1 && surahNumber <= 114, 'surahNumber must be between 1 and 114');
+       assert(
+         surahNumber >= 1 && surahNumber <= 114,
+         'surahNumber must be between 1 and 114',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -85,20 +88,29 @@ class QcfVerses extends StatelessWidget {
       locale: const Locale("ar"),
       text: TextSpan(
         children: verseSpans,
-        style: TextStyle(
-          color: effectiveTheme.verseTextColor,
-        ),
+        style: TextStyle(color: effectiveTheme.verseTextColor),
       ),
     );
   }
 
   /// Builds the list of TextSpan widgets for all verses in the range.
-  List<InlineSpan> _buildVerseSpans(BuildContext context, QcfThemeData effectiveTheme) {
+  List<InlineSpan> _buildVerseSpans(
+    BuildContext context,
+    QcfThemeData effectiveTheme,
+  ) {
     List<InlineSpan> verseSpans = [];
 
-    for (int verseNumber = firstVerse; verseNumber <= lastVerse; verseNumber++) {
+    for (
+      int verseNumber = firstVerse;
+      verseNumber <= lastVerse;
+      verseNumber++
+    ) {
       // Get the verse text and page information
-      String verseText = getVerseQCF(surahNumber, verseNumber, verseEndSymbol: true);
+      String verseText = getVerseQCF(
+        surahNumber,
+        verseNumber,
+        verseEndSymbol: true,
+      );
       int pageNumber = getPageNumber(surahNumber, verseNumber);
       String fontFamily = "QCF_P${pageNumber.toString().padLeft(3, '0')}";
 
@@ -108,7 +120,8 @@ class QcfVerses extends StatelessWidget {
 
       // Add thin space after first character if verse starts a page
       if (isPageStart && verseText.length > 1) {
-        verseText = "${verseText.substring(0, 1)}\u200A${verseText.substring(1)}";
+        verseText =
+            "${verseText.substring(0, 1)}\u200A${verseText.substring(1)}";
       }
 
       // Remove leading newline for the first verse in the range
@@ -118,63 +131,83 @@ class QcfVerses extends StatelessWidget {
 
       // Determine if verse ends with newline
       bool endsWithNewline = verseText.endsWith("\n");
-      
-      // Remove the verse number glyph (last character or last 2 if newline)
-      String verseTextWithoutNumber = endsWithNewline
-          ? verseText.substring(0, verseText.length - 2)
-          : verseText.substring(0, verseText.length - 1);
+
+      // Remove the verse number glyph. The fixed API handles trailing '\n' correctly.
+      String verseTextWithoutNumber = getVerseQCF(
+        surahNumber,
+        verseNumber,
+        verseEndSymbol: false,
+      );
 
       // Calculate responsive font size
-      double effectiveFontSize = fontSize ?? (getFontSize(pageNumber, context) / sp);
+      double effectiveFontSize =
+          fontSize ?? (getFontSize(pageNumber, context) / sp);
 
       // Build verse number span
-      InlineSpan? verseNumberSpan;
+      List<InlineSpan> verseChildren = [];
       if (showVerseNumbers) {
         String verseNumberText;
         if (verseNumberFormatter != null) {
           // Use custom formatter
           verseNumberText = verseNumberFormatter!(verseNumber);
-          
+
           // Add newline or space after verse number
           if (endsWithNewline && verseNumber != lastVerse) {
             verseNumberText += "\n";
           } else {
             verseNumberText += " ";
           }
-          
-          verseNumberSpan = TextSpan(
-            text: verseNumberText,
-            style: TextStyle(
-              fontSize: effectiveTheme.verseNumberHeight > 0 
-                  ? effectiveFontSize * 0.8
-                  : effectiveFontSize,
-              height: effectiveTheme.verseNumberHeight / h,
-              fontFamily: fontFamily,
-              package: 'qcf_quran',
-              color: effectiveTheme.verseNumberColor,
-              backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+
+          verseChildren.add(
+            TextSpan(
+              text: verseNumberText,
+              style: TextStyle(
+                fontSize:
+                    effectiveTheme.verseNumberHeight > 0
+                        ? effectiveFontSize * 0.8
+                        : effectiveFontSize,
+                height: effectiveTheme.verseNumberHeight / h,
+                fontFamily: fontFamily,
+                package: 'qcf_quran',
+                color: effectiveTheme.verseNumberColor,
+                backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+              ),
             ),
           );
         } else {
-          // Use QCF verse number glyph (default)
+          // Use QCF verse number glyph (default).
+          // getVerseNumberQCF is now fixed to return the actual glyph even when
+          // the verse ends with '\n'.
           verseNumberText = getVerseNumberQCF(surahNumber, verseNumber);
-          
-          verseNumberSpan = TextSpan(
-            text: verseNumberText,
-            style: TextStyle(
-              fontSize: effectiveFontSize,
-              height: effectiveTheme.verseNumberHeight / h,
-              fontFamily: fontFamily,
-              package: 'qcf_quran',
-              color: effectiveTheme.verseNumberColor,
-              backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+
+          verseChildren.add(
+            TextSpan(
+              text: verseNumberText,
+              style: TextStyle(
+                fontSize: effectiveFontSize,
+                height: effectiveTheme.verseNumberHeight / h,
+                fontFamily: fontFamily,
+                package: 'qcf_quran',
+                color: effectiveTheme.verseNumberColor,
+                backgroundColor: effectiveTheme.verseNumberBackgroundColor,
+              ),
             ),
           );
+
+          // Append the newline outside the colored span for tight rendering
+          if (endsWithNewline) {
+            verseChildren.add(const TextSpan(text: "\n"));
+          }
         }
+      } else if (endsWithNewline) {
+        verseChildren.add(const TextSpan(text: "\n"));
       }
 
       // Build the verse span
-      final verseBgColor = effectiveTheme.verseBackgroundColor?.call(surahNumber, verseNumber);
+      final verseBgColor = effectiveTheme.verseBackgroundColor?.call(
+        surahNumber,
+        verseNumber,
+      );
 
       verseSpans.add(
         TextSpan(
@@ -189,7 +222,7 @@ class QcfVerses extends StatelessWidget {
             color: effectiveTheme.verseTextColor,
             backgroundColor: verseBgColor,
           ),
-          children: verseNumberSpan != null ? [verseNumberSpan] : null,
+          children: verseChildren.isNotEmpty ? verseChildren : null,
         ),
       );
     }

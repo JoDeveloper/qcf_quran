@@ -14,7 +14,7 @@ class _QuranHomePageState extends State<QuranHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageviewQuran(
-        initialPageNumber: 1,
+        initialPageNumber: 5,
 
         ///sp for responsiveness
         sp: 1.sp,

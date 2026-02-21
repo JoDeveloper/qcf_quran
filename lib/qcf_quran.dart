@@ -201,12 +201,19 @@ String getVerseQCF(
   String verse = "";
   for (var i in quranText) {
     if (i['surah_number'] == surahNumber && i['verse_number'] == verseNumber) {
-      verse = (verseEndSymbol
-          ? i['qcfData'].toString()
-          : i['qcfData'].toString().substring(
-              0,
-              i['qcfData'].toString().length - 1,
-            ));
+      final String qcfData = i['qcfData'].toString();
+      if (verseEndSymbol) {
+        verse = qcfData;
+      } else {
+        // If qcfData ends with '\n', the last two chars are [glyph, '\n'].
+        // Strip both so the returned string is the verse text only (no glyph, no newline).
+        // Otherwise just strip the single glyph at the end.
+        final bool endsWithNewline = qcfData.endsWith('\n');
+        verse = qcfData.substring(
+          0,
+          qcfData.length - (endsWithNewline ? 2 : 1),
+        );
+      }
       break;
     }
   }
@@ -223,21 +230,26 @@ String getVerseNumberQCF(
   int verseNumber, {
   bool verseEndSymbol = true,
 }) {
-  String lastCharacter = "";
+  String glyph = "";
   for (var i in quranText) {
     if (i['surah_number'] == surahNumber && i['verse_number'] == verseNumber) {
-      lastCharacter = i['qcfData'].toString().substring(
-        i['qcfData'].toString().length - 1,
-      );
+      final String qcfData = i['qcfData'].toString();
+      // If qcfData ends with '\n', the glyph is the second-to-last character.
+      // Otherwise the glyph is the last character.
+      final bool endsWithNewline = qcfData.endsWith('\n');
+      glyph =
+          endsWithNewline
+              ? qcfData.substring(qcfData.length - 2, qcfData.length - 1)
+              : qcfData.substring(qcfData.length - 1);
       break;
     }
   }
 
-  if (lastCharacter == "") {
+  if (glyph == "") {
     throw "No verse found with given surahNumber and verseNumber.\n\n";
   }
 
-  return lastCharacter;
+  return glyph;
 }
 
 Map searchWords(String words) {

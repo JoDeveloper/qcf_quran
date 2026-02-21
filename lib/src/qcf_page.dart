@@ -41,7 +41,8 @@ class QcfPage extends StatelessWidget {
     int surahNumber,
     int verseNumber,
     LongPressStartDetails details,
-  )? onLongPressDown;
+  )?
+  onLongPressDown;
 
   /// Callback when a verse is tapped.
   /// Note: If [onTap] is provided, it takes precedence over [onLongPress] for the gesture recognizer
@@ -69,7 +70,6 @@ class QcfPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     // Validate page number
     if (pageNumber < 1 || pageNumber > 604) {
       return Center(child: Text('Invalid page number: $pageNumber'));
@@ -86,9 +86,7 @@ class QcfPage extends StatelessWidget {
     final verseSpans = <InlineSpan>[];
     if (pageNumber == 2 || pageNumber == 1) {
       verseSpans.add(
-        WidgetSpan(
-          child: SizedBox(height: screenSize.height * .175),
-        ),
+        WidgetSpan(child: SizedBox(height: screenSize.height * .175)),
       );
     }
     for (final r in ranges) {
@@ -100,9 +98,7 @@ class QcfPage extends StatelessWidget {
         if (v == start && v == 1) {
           if (theme.showHeader) {
             verseSpans.add(
-              WidgetSpan(
-                child: HeaderWidget(suraNumber: surah, theme: theme),
-              ),
+              WidgetSpan(child: HeaderWidget(suraNumber: surah, theme: theme)),
             );
           }
           if (theme.showBasmala && pageNumber != 1 && pageNumber != 187) {
@@ -119,45 +115,32 @@ class QcfPage extends StatelessWidget {
               // We'll add a newline ensuring separation.
               verseSpans.add(const TextSpan(text: "\n"));
             } else {
-              if (surah != 97 && surah != 95) {
-                verseSpans.add(
-                  TextSpan(
-                    text: " ﱁ  ﱂﱃﱄ\n",
-                    style: TextStyle(
-                      fontFamily: "QCF_P001",
-                      package: 'qcf_quran',
-                      fontSize: getScreenType(context) == ScreenType.large
-                          ? theme.basmalaFontSizeLarge * sp
-                          : theme.basmalaFontSizeSmall * sp,
-                      color: theme.basmalaColor,
-                    ),
+              verseSpans.add(
+                TextSpan(
+                  text: " ﱁ  ﱂﱃﱄ\n",
+                  style: TextStyle(
+                    fontFamily: "QCF_P001",
+                    package: 'qcf_quran',
+                    fontSize:
+                        getScreenType(context) == ScreenType.large
+                            ? theme.basmalaFontSizeLarge * sp
+                            : theme.basmalaFontSizeSmall * sp,
+                    color: theme.basmalaColor,
                   ),
-                );
-              } else {
-                verseSpans.add(
-                  TextSpan(
-                    text: "齃𧻓𥳐龎\n",
-                    style: TextStyle(
-                      fontFamily: "QCF_BSML",
-                      package: 'qcf_quran',
-                      fontSize: getScreenType(context) == ScreenType.large
-                          ? theme.basmalaSpecialFontSizeLarge * sp
-                          : theme.basmalaSpecialFontSizeSmall * sp,
-                      color: theme.basmalaColor,
-                    ),
-                  ),
-                );
-              }
+                ),
+              );
             }
           }
         }
-        
+
         // Gesture Handling
         GestureRecognizer? recognizer;
         if (onTap != null) {
-          recognizer = TapGestureRecognizer()
-            ..onTap = () => onTap?.call(surah, v);
-        } else if (onLongPress != null || onLongPressDown != null || onLongPressUp != null) {
+          recognizer =
+              TapGestureRecognizer()..onTap = () => onTap?.call(surah, v);
+        } else if (onLongPress != null ||
+            onLongPressDown != null ||
+            onLongPressUp != null) {
           final longPressRecognizer = LongPressGestureRecognizer();
           longPressRecognizer.onLongPress = () => onLongPress?.call(surah, v);
           longPressRecognizer.onLongPressStart =
@@ -176,33 +159,36 @@ class QcfPage extends StatelessWidget {
         // Verse Number Logic
         InlineSpan verseNumberSpan;
         if (theme.verseNumberBuilder != null) {
-          verseNumberSpan = theme.verseNumberBuilder!(surah, v, getVerseNumberQCF(surah, v));
+          verseNumberSpan = theme.verseNumberBuilder!(
+            surah,
+            v,
+            getVerseNumberQCF(surah, v),
+          );
         } else {
           verseNumberSpan = TextSpan(
             text: getVerseNumberQCF(surah, v),
-             style: TextStyle(
+            style: TextStyle(
               fontFamily: pageFont,
               package: 'qcf_quran',
               color: theme.verseNumberColor,
               height: theme.verseNumberHeight * h,
-              backgroundColor:
-                  theme.verseNumberBackgroundColor ?? verseBgColor,
+              backgroundColor: theme.verseNumberBackgroundColor ?? verseBgColor,
             ),
           );
         }
 
         verseSpans.add(
           TextSpan(
-            text: v == ranges[0]['start']
-                ? "${getVerseQCF(surah, v, verseEndSymbol: false).substring(0, 1)}\u200A${getVerseQCF(surah, v, verseEndSymbol: false).substring(1, getVerseQCF(surah, v, verseEndSymbol: false).length)}"
-                : getVerseQCF(surah, v, verseEndSymbol: false),
+            text:
+                v == ranges[0]['start']
+                    ? "${getVerseQCF(surah, v, verseEndSymbol: false).substring(0, 1)}\u200A${getVerseQCF(surah, v, verseEndSymbol: false).substring(1, getVerseQCF(surah, v, verseEndSymbol: false).length)}"
+                    : getVerseQCF(surah, v, verseEndSymbol: false),
             recognizer: recognizer,
-            style: verseBgColor != null
-                ? TextStyle(backgroundColor: verseBgColor)
-                : null,
-            children: [
-              verseNumberSpan
-            ],
+            style:
+                verseBgColor != null
+                    ? TextStyle(backgroundColor: verseBgColor)
+                    : null,
+            children: [verseNumberSpan],
           ),
         );
       }
@@ -230,19 +216,23 @@ class QcfPage extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: pageFont,
                           package: 'qcf_quran',
-                          fontSize: isPortrait
-                              ? baseFontSize
-                              : (pageNumber == 1 || pageNumber == 2)
+                          fontSize:
+                              isPortrait
+                                  ? baseFontSize
+                                  : (pageNumber == 1 || pageNumber == 2)
                                   ? 20 * sp
                                   : baseFontSize - (17 * sp),
                           color: theme.verseTextColor,
-                          height: isPortrait
-                              ? (pageNumber == 1 || pageNumber == 2)
-                                  ? 2.2 * h
-                                  : theme.verseHeight * h
-                              : (pageNumber == 1 || pageNumber == 2)
-                                  ? 4 * h // simplified based on user's manual edit evaluation
-                                  : 4 * h, // simplified based on user's manual edit evaluation
+                          height:
+                              isPortrait
+                                  ? (pageNumber == 1 || pageNumber == 2)
+                                      ? 2.2 * h
+                                      : theme.verseHeight * h
+                                  : (pageNumber == 1 || pageNumber == 2)
+                                  ? 4 *
+                                      h // simplified based on user's manual edit evaluation
+                                  : 4 *
+                                      h, // simplified based on user's manual edit evaluation
                           letterSpacing: theme.letterSpacing,
                           wordSpacing: theme.wordSpacing,
                         ),
